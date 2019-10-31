@@ -16,8 +16,8 @@ class UserNotes extends Migration
         Schema::create('user_notes', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('user_id');
-            $table->integer('notes_id');
-            $table->unique('user_id', 'notes_id');
+            $table->integer('note_id');
+            $table->unique('user_id', 'note_id');
             $table->timestamps();
         });
     }
