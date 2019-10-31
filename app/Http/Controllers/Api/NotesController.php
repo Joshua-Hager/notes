@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Note;
 use App\UserNote;
+use App\User;
 
 class NotesController extends Controller
 {
@@ -14,9 +15,16 @@ class NotesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return response('hello world');
+        $request->validate([
+            'user_id' => 'required|integer|exists:users,id'
+        ]);
+
+        $user = (new User())->find($request->user_id);
+        $notes = $user->notes()->get();
+        
+        return response($notes);
     }
 
     /**
@@ -39,18 +47,16 @@ class NotesController extends Controller
     {
         
         $request->validate([
-            'user_id' => 'required|integer',
-            'title'   => 'required|string'
+            'user_id' => 'required|integer|exists:users,id',
+            'title'   => 'required|string',
+            'text'    => 'nullable|strings'
         ]);
 
         $note = new Note();
         $note->title = $request->title;
+        $note->user_id = $request->user_id;
+        $note->note  = $request->text;
         $note->save();
-
-        $user_note = new UserNote();
-        $user_note->user_id = $request->user_id;
-        $user_note->note_id = $note->id;
-        $user_note->save();
 
         return response($note->toJson());
     }

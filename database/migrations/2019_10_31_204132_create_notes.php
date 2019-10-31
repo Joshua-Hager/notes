@@ -17,6 +17,7 @@ class CreateNotes extends Migration
             $table->bigIncrements('id');
             $table->string('title', 50)->nullable(false);
             $table->string('note', 1000)->nullable();
+            $table->integer('user_id');
             $table->timestamps();
         });
     }
