@@ -116,8 +116,19 @@ class NotesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        //
+        $request->validate([
+            'user_id' => 'required|integer|exists:users,id'
+        ]);
+
+        $note = (new Note())->where('id', $id)->where('user_id', $request->user_id)->first();
+        
+        if ($note){
+            $note->delete();
+            return response('Note Destroyed');
+        }
+        
+        return response('Note not found', 404);
     }
 }
