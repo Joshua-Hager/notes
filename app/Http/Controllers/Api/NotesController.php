@@ -49,7 +49,7 @@ class NotesController extends Controller
         $request->validate([
             'user_id' => 'required|integer|exists:users,id',
             'title'   => 'required|string',
-            'text'    => 'nullable|strings'
+            'text'    => 'nullable|string'
         ]);
 
         $note = new Note();
@@ -92,7 +92,22 @@ class NotesController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'user_id' => 'required|integer|exists:users,id',
+            'title'   => 'required|string',
+            'text'    => 'nullable|string'
+        ]);
+
+        $note = (new Note())->where('id', $id)->where('user_id', $request->user_id)->first();
+        
+        if ($note){
+            $note->title = $request->title;
+            $note->note  = $request->text;
+            $note->save();
+            return response($note->toJson());
+        }
+        
+        return response('Note not found', 404);
     }
 
     /**
